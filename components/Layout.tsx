@@ -7,7 +7,7 @@ import utilStyles from '../styles/utils.module.css';
 
 interface LayoutProps {
   children: ReactNode;
-  home: boolean;
+  home?: boolean;
 }
 
 const name = 'Jin Kim';
