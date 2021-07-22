@@ -6,7 +6,7 @@
 - pre-rendering (SSG, SSR)
 - 코드 스플릿팅
 - CSR with optimized prefetching
-- CSS, SASS 모듈 지원 + CSS-in-JS 라이브러리 지원
+- CSS, SASS 모듈, CSS-in-JS 라이브러리 지원
 - 개발환경 Fast refresh
 - API 라우트
 
@@ -25,13 +25,13 @@ Next.js에서 [페이지](https://nextjs.org/docs/basic-features/pages)는 `page
 - `pages/index.js` 파일은 `/` 경로에 해당한다.
 - `pages/posts/first-post.js` 파일은 `/posts/first-post` 경로에 해당한다.
 
-각 페이지 컴포넌트의 이름은 요구에 맞게 작성하면된다. 주의해야 할 것은 해당 페이지 컴포넌트를 `export default` 해야한다는 점이다.
+각 페이지 컴포넌트의 이름은 요구에 맞게 작성하면된다. 단, 주의해야 할 것은 해당 페이지 컴포넌트를 `export default` 해야한다는 점이다.
 
 &nbsp;
 
 ### [링크 컴포넌트](https://nextjs.org/docs/api-reference/next/link)
 
-보통 페이지 사이를 이동 할 때 `a` 태그를 사용한다. 반면, Next.js에서는 `next/link` 컴포넌트를 import하여 `a` 태그를 wrap하여 사용한다. Next.js의 Link 컴포넌트는 앱 내에서 client-side 내비게이션을 가능하게한다.
+보통 페이지 사이를 이동 할 때 `a` 태그를 사용한다. 반면, Next.js에서는 `next/link` 컴포넌트를 import하여 `a` 태그를 wrap하여 사용한다. Next.js의 `Link` 컴포넌트는 앱 내에서 client-side 내비게이션을 가능하게한다.
 
 ```tsx
 import Link from 'next/link';
@@ -56,7 +56,7 @@ import Link from 'next/link';
 
 ### 코드 스플릿팅 & prefetching
 
-Next.js는 자동으로 코드 스플릿팅을 지원한다. 따라서 각 페이지에 필요한 자바스크립트 파일만을 로드한다. 각 페이지에 필요한 자바스크립트만을 로드한다는 뜻은, 각 페이지가 독립되어 있다는 뜻이다. 특정 페이지에서 에러가 발생하여도 다른 페이지는 정상 동작한다.
+Next.js는 자동으로 코드 스플릿팅을 지원한다. 따라서 각 페이지에 필요한 자바스크립트 파일만을 로드한다. 각 페이지에 필요한 자바스크립트만을 로드한다는 뜻은, 각 페이지가 독립되어 있다는 뜻이다. 특정 페이지에서 에러가 발생해도 다른 페이지에 영향을 주지 않는다.
 
 또한 Next.js는 프로덕션 환경에서, `Link` 컴포넌트가 뷰포트에 노출되어 있을 때, 해당 링크의 페이지에 필요한 코드를 백그라운드에서 prefetch한다. 따라서 `Link` 컴포넌트를 클릭했을 때, 이미 해당 링크의 페이지에 필요한 코드가 로드되어 있으며, 페이지 이동 속도는 매우 빠르다.
 
@@ -64,7 +64,7 @@ Next.js는 자동으로 코드 스플릿팅을 지원한다. 따라서 각 페�
 
 ## 2. Assets, Metadata, CSS
 
-Next.js는 `public` 디렉토리 안에 위치한 [static assets(ex. images) 제공 할 수 있다](https://nextjs.org/docs/basic-features/static-file-serving). `public` 안의 파일은 `pages` 디렉토리와 같이 앱 루트에서 접근 가능하다.
+Next.js는 `public` 디렉토리 안에 위치한 [static assets(ex. images) 제공 할 수 있다](https://nextjs.org/docs/basic-features/static-file-serving). `public` 디렉토리 하위의 파일은 `pages` 디렉토리와 같이 앱 루트에서 접근 가능하다.
 
 또한 `public` 디렉토리는 Google Site Verification을 위한 `robots.txt` 파일을 포함 할 수 있다. 
 
@@ -128,7 +128,7 @@ const HeadComponent = () => (
 
 ### CSS 스타일링
 
-Next.js는 기본적으로 `styled-jsx` 라이브러리를 지원한다. `styled-jsx` 는 리액트 컴포넌트 내부에 스타일을 작성 할 수 있도록하며, 작성한 스타일은 스코핑된다.
+Next.js는 기본적으로 `styled-jsx` 라이브러리를 지원한다. `styled-jsx`는 리액트 컴포넌트 내부에 스타일을 작성 할 수 있도록하며, 작성한 스타일은 스코핑된다.
 
 ```tsx
 <style jsx>{`
@@ -156,7 +156,7 @@ CSS, SASS 모듈 사용 시 유니크한 클래스 네임을 자동으로 생성
 
 **전역 스타일**
 
-전역 스타일은 `pages/_app.js` 파일(`App` 컴포넌트)에만 추가한다. 이 곳에 추가된 전역 스타일은 말 그대로 모든 페이지의 컴포넌트 스타일에 영향을 미친다. App 컴포넌트에는 전역 스타일 뿐만 아니라, 여러 페이지에서 공통으로 사용되는 상태도 관리될 수 있다.
+전역 스타일은 `pages/_app.js` 파일(`App` 컴포넌트)에만 추가한다. 이 곳에 추가된 전역 스타일은 말 그대로 모든 페이지의 컴포넌트 스타일에 영향을 미친다. App 컴포넌트에는 전역 스타일 뿐만 아니라, 전역 상태도 관리될 수 있다.
 
 ```tsx
 // pages/_app.tsx
@@ -191,7 +191,7 @@ Pre-rendering이 적용된 페이지와 그렇지 않은 페이지의 차이점�
 
 ### Pre-rendering의 두 가지 종류
 
-Next.js에서 사용하는 pre-rendering 방법은 크게 두 가지이다. 두 방법의 차이점은 **HTML 파일 생성 시점**이다.
+Next.js에서 사용하는 pre-rendering 방법은 두 가지이다. 두 방법의 차이점은 **HTML 파일 생성 시점**이다.
 
 * [Static Generation](https://nextjs.org/docs/basic-features/pages#static-generation-recommended): 빌드 타임에 HTML 파일을 생성한다. 이후 발생하는 요청마다 해당 HTML 파일을 재사용한다.
 * [Server-side Rendering](https://nextjs.org/docs/basic-features/pages#server-side-rendering): 매 요청 시 HTML 파일을 생성한다.
@@ -212,7 +212,7 @@ Next.js에서는 각 페이지 별로 어떤 pre-rendering 방법을 쓸 것인�
 
 Next.js의 문서에서는 가능한 static generation을 사용하는 것을 권장한다. 페이지를 1회 빌드하여 재사용 할 수 있기 때문이다. 응답 속도, 서버 성능 측면에서 모두 유리하다.
 
-**만약 사용자의 요청 전에, 페이지를 미리 pre-render해도된다면** static generation을 사용한다. static generation을 적용 할 수 있는 페이지의 예는 아래와 같다.
+**만약 사용자의 요청 전에, 페이지를 미리 pre-render해도 된다면** static generation을 사용한다. static generation을 적용 할 수 있는 페이지 예는 아래와 같다.
 
 * 마케팅 페이지
 * 블로그 포스트
@@ -221,7 +221,9 @@ Next.js의 문서에서는 가능한 static generation을 사용하는 것을 �
 
 &nbsp;  
 
-**만약 사용자의 요청 전에 페이지를 미리 pre-render하면 안될 경우**, Server-side rendering을 사용한다. 예를 들어, 해당 페이지의 컨텐츠가 매우 동적이고, 매 요청 시 변경될 수 있다면 static generation은 적합하지 않다. 이러한 경우, 페이지 컨텐츠는 항상 최신 상태를 유지 할 수 있지만, 페이지 응답 속도가 저하 될 수 있기 때문에 pre-render하지 않고 **client-side 자바스크립트를 사용하여 컨텐츠를 업데이트 할 수도 있다.**
+**만약 사용자의 요청 전에 페이지를 미리 pre-render하면 안될 경우**, Server-side rendering을 사용한다. 예를 들어, 해당 페이지의 컨텐츠가 매우 동적이고, 매 요청 시 변경될 수 있다면 static generation은 적합하지 않다.
+
+SSR을 사용 할 경우 페이지 컨텐츠는 항상 최신 상태를 유지 할 수 있지만, 페이지 응답 속도가 저하 될 수 있기 때문에 pre-render하지 않고 **client-side 자바스크립트를 사용하여 컨텐츠를 업데이트 할 수도 있다.**
 
 &nbsp;  
 
@@ -231,14 +233,14 @@ Next.js에서 데이터를 요청하지 않는 페이지는 기본적으로 stat
 
 <img src="/Users/smilejin92/Desktop/static-generation-with-data.png" alt="static-generation-with-data" style="zoom:33%;" />
 
-이러한 페이지의 경우 `getStaticProps` 함수를 사용하여 해당 페이지에 필요한 정보를 빌드 타임때 요청할 수 있다.
+이러한 페이지의 경우 `getStaticProps` 함수를 사용하여 해당 페이지에 필요한 정보를 빌드 타임때 요청하여 페이지 컴포넌트의 `prop`으로 전달 할 수 있다.
 
 &nbsp;  
 
 ### Static Generation - getStaticProps를 사용하여 데이터 요청하기
 
 1. 페이지 컴포넌트와 같은 위치에 `getStaticProps` async 함수를 export
-2. `getStaticProps` 함수 내부에서 데이터 요청 후 페이지 컴포넌트에 주입 될 prop 객체를 반환
+2. `getStaticProps` 함수 내부에서 데이터 요청 후 페이지 컴포넌트에 주입 될 props 객체를 반환
 
 ```tsx
 export async function getStaticProps() {
@@ -260,18 +262,29 @@ export default function Home({ data }) { ... }
 
 &nbsp;  
 
-`getStaticProps` 함수 내부에서 DB 쿼리 문도 작성 할 수있다. `getStaticProps` 함수는 server-side에서만 실행되며, client-side에서 절대 실행되지 않는다 (JS 번들에 포함되지도 않는다).
+`getStaticProps` 함수 내부에서 DB 쿼리문도 작성 할 수있다. `getStaticProps` 함수는 server-side에서만 실행되며, client-side에서 절대 실행되지 않는다 (JS 번들에 포함되지도 않는다).
 
 ```tsx
 import someDatabaseSDK from 'someDatabaseSDK'
 
 const databaseClient = someDatabaseSDK.createClient(...)
 
-export async function getSortedPostsData() {
-  // Instead of the file system,
-  // fetch post data from a database
+async function getSortedPostsData() {
   return databaseClient.query('SELECT posts...')
 }
+
+export async function getStaticProps() {
+  const data = await getSortedPostsData();
+
+  return {
+    props: {
+      data
+    }
+  }
+}
+
+// 페이지 컴포넌트
+export default function Home({ data }) { ... }
 ```
 
 &nbsp;  
@@ -282,9 +295,13 @@ export async function getSortedPostsData() {
 
 ### SSR - getServerSideProps를 사용하여 데이터 요청하기
 
-만약 빌드 시 특정 데이터를 요청하는 것이 아니라, request time에 요청해야한다면 Server-side rendering을 사용 할 수 있다.
+만약 빌드 시 특정 데이터를 요청하는 것이 아니라, request time에 요청해야 한다면 Server-side rendering을 사용 할 수 있다.
 
 <img src="/Users/smilejin92/Desktop/server-side-rendering-with-data.png" alt="server-side-rendering-with-data" style="zoom:33%;" />
+
+&nbsp;  
+
+`getServerSideProps` 함수도 페이지 컴포넌트와 같은 위치에 작성해야한다.
 
 ```javascript
 export async function getServerSideProps(context) {
@@ -294,7 +311,12 @@ export async function getServerSideProps(context) {
     }
   }
 }
+
+// 페이지 컴포넌트
+export default function Home(props) { ... }
 ```
+
+&nbsp;  
 
 `getServerSideProps` 함수에 전달되는 `context` 매개변수는 요청에 관련된 정보를 담고있다.
 
@@ -303,133 +325,23 @@ export async function getServerSideProps(context) {
 {
   req: IncomingMessage {
     _readableState: ReadableState {
-      objectMode: false,
-      highWaterMark: 16384,
-      buffer: BufferList { head: null, tail: null, length: 0 },
-      length: 0,
-      pipes: [],
-      flowing: null,
-      ended: true,
-      endEmitted: false,
-      reading: false,
-      sync: true,
-      needReadable: false,
-      emittedReadable: false,
-      readableListening: false,
-      resumeScheduled: false,
-      errorEmitted: false,
-      emitClose: true,
-      autoDestroy: false,
-      destroyed: false,
-      errored: null,
-      closed: false,
-      closeEmitted: false,
-      defaultEncoding: 'utf8',
-      awaitDrainWriters: null,
-      multiAwaitDrain: false,
-      readingMore: true,
-      decoder: null,
-      encoding: null,
-      [Symbol(kPaused)]: null
+      ...
     },
     _events: [Object: null prototype] { end: [Function: clearRequestTimeout] },
     _eventsCount: 1,
     _maxListeners: undefined,
     socket: Socket {
-      connecting: false,
-      _hadError: false,
-      _parent: null,
-      _host: null,
-      _readableState: [ReadableState],
-      _events: [Object: null prototype],
-      _eventsCount: 8,
-      _maxListeners: undefined,
-      _writableState: [WritableState],
-      allowHalfOpen: true,
-      _sockname: null,
-      _pendingData: null,
-      _pendingEncoding: '',
-      server: [Server],
-      _server: [Server],
-      parser: [HTTPParser],
-      on: [Function: socketListenerWrap],
-      addListener: [Function: socketListenerWrap],
-      prependListener: [Function: socketListenerWrap],
-      _paused: false,
-      _httpMessage: [ServerResponse],
-      timeout: 0,
-      [Symbol(async_id_symbol)]: 12258,
-      [Symbol(kHandle)]: [TCP],
-      [Symbol(kSetNoDelay)]: false,
-      [Symbol(lastWriteQueueSize)]: 0,
-      [Symbol(timeout)]: Timeout {
-        _idleTimeout: -1,
-        _idlePrev: null,
-        _idleNext: null,
-        _idleStart: 105919,
-        _onTimeout: null,
-        _timerArgs: undefined,
-        _repeat: null,
-        _destroyed: true,
-        [Symbol(refed)]: false,
-        [Symbol(kHasPrimitive)]: false,
-        [Symbol(asyncId)]: 12304,
-        [Symbol(triggerId)]: 12301
-      },
-      [Symbol(kBuffer)]: null,
-      [Symbol(kBufferCb)]: null,
-      [Symbol(kBufferGen)]: null,
-      [Symbol(kCapture)]: false,
-      [Symbol(kBytesRead)]: 0,
-      [Symbol(kBytesWritten)]: 0,
-      [Symbol(RequestTimeout)]: undefined
+      ...
     },
     httpVersionMajor: 1,
     httpVersionMinor: 1,
     httpVersion: '1.1',
     complete: true,
     headers: {
-      host: 'localhost:3000',
-      connection: 'keep-alive',
-      'sec-ch-ua': '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
-      'sec-ch-ua-mobile': '?0',
-      'upgrade-insecure-requests': '1',
-      'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36',
-      accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-      'sec-fetch-site': 'none',
-      'sec-fetch-mode': 'navigate',
-      'sec-fetch-user': '?1',
-      'sec-fetch-dest': 'document',
-      'accept-encoding': 'gzip, deflate, br',
-      'accept-language': 'en-US,en;q=0.9,ko;q=0.8,la;q=0.7'
+      ...
     },
     rawHeaders: [
-      'Host',
-      'localhost:3000',
-      'Connection',
-      'keep-alive',
-      'sec-ch-ua',
-      '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
-      'sec-ch-ua-mobile',
-      '?0',
-      'Upgrade-Insecure-Requests',
-      '1',
-      'User-Agent',
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36',
-      'Accept',
-      'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-      'Sec-Fetch-Site',
-      'none',
-      'Sec-Fetch-Mode',
-      'navigate',
-      'Sec-Fetch-User',
-      '?1',
-      'Sec-Fetch-Dest',
-      'document',
-      'Accept-Encoding',
-      'gzip, deflate, br',
-      'Accept-Language',
-      'en-US,en;q=0.9,ko;q=0.8,la;q=0.7'
+      ...
     ],
     trailers: {},
     rawTrailers: [],
@@ -440,53 +352,7 @@ export async function getServerSideProps(context) {
     statusCode: null,
     statusMessage: null,
     client: Socket {
-      connecting: false,
-      _hadError: false,
-      _parent: null,
-      _host: null,
-      _readableState: [ReadableState],
-      _events: [Object: null prototype],
-      _eventsCount: 8,
-      _maxListeners: undefined,
-      _writableState: [WritableState],
-      allowHalfOpen: true,
-      _sockname: null,
-      _pendingData: null,
-      _pendingEncoding: '',
-      server: [Server],
-      _server: [Server],
-      parser: [HTTPParser],
-      on: [Function: socketListenerWrap],
-      addListener: [Function: socketListenerWrap],
-      prependListener: [Function: socketListenerWrap],
-      _paused: false,
-      _httpMessage: [ServerResponse],
-      timeout: 0,
-      [Symbol(async_id_symbol)]: 12258,
-      [Symbol(kHandle)]: [TCP],
-      [Symbol(kSetNoDelay)]: false,
-      [Symbol(lastWriteQueueSize)]: 0,
-      [Symbol(timeout)]: Timeout {
-        _idleTimeout: -1,
-        _idlePrev: null,
-        _idleNext: null,
-        _idleStart: 105919,
-        _onTimeout: null,
-        _timerArgs: undefined,
-        _repeat: null,
-        _destroyed: true,
-        [Symbol(refed)]: false,
-        [Symbol(kHasPrimitive)]: false,
-        [Symbol(asyncId)]: 12304,
-        [Symbol(triggerId)]: 12301
-      },
-      [Symbol(kBuffer)]: null,
-      [Symbol(kBufferCb)]: null,
-      [Symbol(kBufferGen)]: null,
-      [Symbol(kCapture)]: false,
-      [Symbol(kBytesRead)]: 0,
-      [Symbol(kBytesWritten)]: 0,
-      [Symbol(RequestTimeout)]: undefined
+      ...
     },
     _consuming: false,
     _dumped: false,
@@ -496,91 +362,7 @@ export async function getServerSideProps(context) {
     [Symbol(RequestTimeout)]: undefined
   },
   res: <ref *1> ServerResponse {
-    _events: [Object: null prototype] { finish: [Function: bound resOnFinish] },
-    _eventsCount: 1,
-    _maxListeners: undefined,
-    outputData: [],
-    outputSize: 0,
-    writable: true,
-    destroyed: false,
-    _last: false,
-    chunkedEncoding: false,
-    shouldKeepAlive: true,
-    _defaultKeepAlive: true,
-    useChunkedEncodingByDefault: true,
-    sendDate: true,
-    _removedConnection: false,
-    _removedContLen: false,
-    _removedTE: false,
-    _contentLength: null,
-    _hasBody: true,
-    _trailer: '',
-    finished: false,
-    _headerSent: false,
-    socket: Socket {
-      connecting: false,
-      _hadError: false,
-      _parent: null,
-      _host: null,
-      _readableState: [ReadableState],
-      _events: [Object: null prototype],
-      _eventsCount: 8,
-      _maxListeners: undefined,
-      _writableState: [WritableState],
-      allowHalfOpen: true,
-      _sockname: null,
-      _pendingData: null,
-      _pendingEncoding: '',
-      server: [Server],
-      _server: [Server],
-      parser: [HTTPParser],
-      on: [Function: socketListenerWrap],
-      addListener: [Function: socketListenerWrap],
-      prependListener: [Function: socketListenerWrap],
-      _paused: false,
-      _httpMessage: [Circular *1],
-      timeout: 0,
-      [Symbol(async_id_symbol)]: 12258,
-      [Symbol(kHandle)]: [TCP],
-      [Symbol(kSetNoDelay)]: false,
-      [Symbol(lastWriteQueueSize)]: 0,
-      [Symbol(timeout)]: Timeout {
-        _idleTimeout: -1,
-        _idlePrev: null,
-        _idleNext: null,
-        _idleStart: 105919,
-        _onTimeout: null,
-        _timerArgs: undefined,
-        _repeat: null,
-        _destroyed: true,
-        [Symbol(refed)]: false,
-        [Symbol(kHasPrimitive)]: false,
-        [Symbol(asyncId)]: 12304,
-        [Symbol(triggerId)]: 12301
-      },
-      [Symbol(kBuffer)]: null,
-      [Symbol(kBufferCb)]: null,
-      [Symbol(kBufferGen)]: null,
-      [Symbol(kCapture)]: false,
-      [Symbol(kBytesRead)]: 0,
-      [Symbol(kBytesWritten)]: 0,
-      [Symbol(RequestTimeout)]: undefined
-    },
-    _header: null,
-    _keepAliveTimeout: 5000,
-    _onPendingData: [Function: bound updateOutgoingData],
-    _sent100: false,
-    _expect_continue: false,
-    statusCode: 200,
-    flush: [Function: flush],
-    write: [Function: write],
-    end: [Function: end],
-    on: [Function: on],
-    writeHead: [Function: writeHead],
-    [Symbol(kCapture)]: false,
-    [Symbol(kNeedDrain)]: false,
-    [Symbol(corked)]: 0,
-    [Symbol(kOutHeaders)]: null
+    ...
   },
   query: {},
   resolvedUrl: '/test',
@@ -603,7 +385,204 @@ SSR 사용 시 주의해야 할 점은 서버가 매 요청을 처리하여 HTML
 
 <img src="/Users/smilejin92/Desktop/client-side-rendering.png" alt="client-side-rendering" style="zoom:33%;" />
 
-이러한 방법은 대시보드 같은 페이지를 다룰 때 잘 사용된다. 대시보드 페이지는 private하며, 사용자마다 페이지에 표시되는 컨텐츠가 다르고, SEO와는 관계 없기 때문에 pre-render될 필요가 없다. 표시되는 데이터 역시 빠른 주기로 업데이트될 수 있기 때문에 client-side rendering을 사용하는 것이 ssr을 사용하는 것 보다 더 나은 선택이 될 수 있다.
+이러한 방법은 대시보드 같은 페이지를 다룰 때 유용하다. 대시보드 페이지는 private하며, 사용자마다 페이지에 표시되는 컨텐츠가 다르고, SEO와는 관계 없기 때문에 pre-render될 필요가 없다. 표시되는 데이터 역시 빠른 주기로 업데이트될 수 있기 때문에 client-side rendering을 사용하는 것이 ssr을 사용하는 것 보다 더 나은 선택이 될 수 있다.
 
 &nbsp;  
+
+## 4. [Dynamic Routes](https://nextjs.org/docs/routing/dynamic-routes)
+
+### Page Path depends on External Data
+
+Next.js는 **페이지 경로가 외부 데이터에 의존적인 페이지**를 pre-render 할 수 있다. 예를 들어, `/posts/:id` 경로에 해당하는 페이지에 각각 필요한 데이터를 요청 후 페이지를 pre-render 할 수 있다. 이를 가능하게 하는 것은 **dynamic URL**이다.
+
+<img src="/Users/smilejin92/Desktop/page-path-external-data.png" alt="page-path-external-data" style="zoom:33%;" />
+
+&nbsp;  
+
+만약 `/posts/:id` 경로에 해당하는 페이지를 생성하고 싶다면 `/pages/posts` 하위에 `[id].js` 파일을 생성한다. 파일 이름이 대괄호 (`[]`)에 감싸져있는 파일은 Next.js에서 dynamic 라우트로 사용된다.
+
+```jsx
+// pages/posts/[id].js
+
+import Layout from '../../components/layout'
+
+export async function getStaticPaths() {
+  // 이 곳에서 다이나믹 라우트(id)에 들어 갈 수 있는 모든 값을 배열로 return 해주어야한다.
+}
+
+export async function getStaticProps({ params }) {
+  // params.id로 필요한 데이터를 요청
+}
+
+export default function Post() {
+  return <Layout>...</Layout>
+}
+```
+
+다이나믹 라우트 컴포넌트는 3가지로 구성되어 있다.
+
+* **getStaticPaths**: params(ex. id)에 들어 갈 수 있는 모든 값을 `paths` 프로퍼티의 값(배열)으로 반환
+* **getStaticProps**: `context` 매개변수를 전달받아 `context.params[paramsName]`에 필요한 정보를 요청
+* 페이지 컴포넌트
+
+<img src="/Users/smilejin92/Desktop/how-to-dynamic-routes.png" alt="how-to-dynamic-routes" style="zoom:33%;" />
+
+&nbsp;  
+
+### getStaticPaths 작성하기
+
+우선 id 파라미터에 해당하는 값을 배열로 반환하는 `getAllPostIds`를 작성하면 아래와 같다.
+
+```js
+export function getAllPostIds() {
+  const fileNames = fs.readdirSync(postsDirectory)
+
+  // Returns an array that looks like this:
+  // [
+  //   {
+  //     params: {
+  //       id: 'ssg-ssr'
+  //     }
+  //   },
+  //   {
+  //     params: {
+  //       id: 'pre-rendering'
+  //     }
+  //   }
+  // ]
+  return fileNames.map(fileName => {
+    return {
+      params: {
+        id: fileName.replace(/\.md$/, '')
+      }
+    }
+  })
+}
+```
+
+주의해야 할 것은 id 파라미터에 해당하는 값을 단순히 문자열의 배열로 반환하는 것이 아니라는 점이다.
+
+만약 다이나믹 라우트 파일 이름이 `[id].js`가 아닌 `[name].js`라면 `params` 객체에 `id` 프로퍼티가 아닌 `name` 프로퍼티를 작성해야한다.
+
+&nbsp;  
+
+```tsx
+import { getAllPostIds } from '../../lib/posts'
+
+export async function getStaticPaths() {
+  const paths = getAllPostIds()
+  return {
+    paths, // possible vales of ID in array
+    fallback: false
+  }
+}
+```
+
+`getStaticPaths` 함수가 리턴하는 객체의 `paths` 프로퍼티에 `id` 파라미터에 들어 갈 수 있는 값을 배열(`getAllPostsId`의 리턴 값)로 할당한다.
+
+&nbsp;  
+
+### getStaticProps 작성하기
+
+우선 `id`를 전달받아 해당 id의 포스트 정보를 요청하는 `getPostData` 함수를 작성해보자.
+
+```ts
+export function getPostData(id) {
+  const fullPath = path.join(postsDirectory, `${id}.md`)
+  const fileContents = fs.readFileSync(fullPath, 'utf8')
+
+  // Use gray-matter to parse the post metadata section
+  const matterResult = matter(fileContents)
+
+  // Combine the data with the id
+  return {
+    id,
+    ...matterResult.data
+  }
+}
+```
+
+그리고 위에서 작성한 `getPostData` 함수를 `getStaticProps` 함수에서 사용한다.
+
+```ts
+import { getAllPostIds, getPostData } from '../../lib/posts'
+
+export async function getStaticPaths() {
+  const paths = getAllPostIds()
+  return {
+    paths, // possible vales of ID in array
+    fallback: false
+  }
+}
+
+// context.params.id
+export async function getStaticProps({ params }) {
+  const postData = getPostData(params.id)
+  
+  return {
+    props: {
+      postData
+    }
+  }
+}
+```
+
+&nbsp;  
+
+### [Fallback](https://nextjs.org/docs/basic-features/data-fetching#the-fallback-key-required)
+
+위 `getStaticPaths` 함수에서 반환된 객체를 보면, `fallback`이라는 프로퍼티가 존재한다. `fallback`의 값에 따라 존재하지 않는 경로로 접근 시 동작이 달라진다.
+
+* `fallback: false` - 404 페이지가 반환된다.
+* `fallback: true` - `getStaticProps` 함수의 동작이 달라진다.
+  * 해당 경로의 fallback 버전 페이지를 반환한다.
+* `fallback: blocking` - `getStaticProps`를 통해 새로운 경로의 페이지가 SSR되어, 캐시된다. 캐시된 페이지는 다음 번 요청에 사용된다.
+
+&nbsp;  
+
+### [Catch-all Routes](https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes)
+
+다이나믹 라우트는 매칭되는 모든 경로를 확인 할 수 있도록 확장될 수 있다. 이전에 작성했던 `[id].js` 파일 이름에 `...`을 추가하여 `[...id].js`로 수정하면된다. 이렇게 수정 할 경우, `/posts/a`, `/posts/a/b`, `/posts/a/b/c`가 모두 매칭된다.
+
+다이나믹 라우트를 확장 할 경우 `getStaticPaths`함수에서 리턴하는 `paths` 프로퍼티의 값도 아래와 같이 수정되어야한다.
+
+```ts
+export async function getStaticPaths() {
+  return {
+    paths: [
+      {
+        params: {
+          id: ['a', 'b', 'c']
+        }
+      }
+    ]
+    fallback: false
+  }
+}
+
+// 이때 getStaticProps에 전달되는 context의 params.id도 배열로 변경된다.
+export async function getStaticProps({ params }) {
+  // params.id = ['a', 'b', 'c']
+}
+```
+
+&nbsp;  
+
+### [Router](https://nextjs.org/docs/api-reference/next/router)
+
+만약 Next.js의 라우터에 접근하고 싶다면, `next/router`의 `useRouter` hook을 사용 할 수 있다.
+
+&nbsp;  
+
+### [404 페이지](https://nextjs.org/docs/advanced-features/custom-error-page)
+
+커스텀 404 페이지를 작성하고 싶다면, `pages/404.js` 파일을 생성하여 페이지 컴포넌트를 작성하면된다.
+
+```tsx
+// pages/404.js
+
+export default function Custom404() {
+  return <h1>404 - Page Not Found</h1>
+}
+```
 
