@@ -586,3 +586,44 @@ export default function Custom404() {
 }
 ```
 
+&nbsp;  
+
+## 5. API Routes
+
+Next.js는 API 라우트를 지원한다. 즉, Next.js 앱 내에서 API endpoint를 생성 할 수 있다. Next.js에서 생성된 API 라우트는 Serverless 함수(Lambda)로서 deploy된다. 또한 API 라우트도 다이나믹 라우트로서 사용될 수 있다. 자세한 내용은 [이 곳](https://nextjs.org/docs/api-routes/dynamic-api-routes)에서 확인 가능하다.
+
+```ts
+// pages/api/hello.js
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+interface Data {
+  name: string
+}
+
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
+  res.status(200).json({ name: 'John Doe' })
+}
+
+```
+
+* `req`는 `http.IncomingMessage`의 인스턴스이며, 몇가지 빌트인 미들웨어가 추가되어 있다. ([더보기](https://nextjs.org/docs/api-routes/api-middlewares))
+* `res`는 `http.ServerResponse`의 인스턴스이며, 몇가지 헬퍼 함수가 추가되어 있다. ([더보기](https://nextjs.org/docs/api-routes/response-helpers))
+
+&nbsp;  
+
+### API Route 사용 시 주의 사항
+
+**`getStaticProps` 혹은 `getStaticPaths`에서 API 라우트를 fetch하지 않는다.** 두 함수 모두 server-side에서 호출되기 때문에 client-side에서 실행 될 일이 없다(JS 번들에 포함되지도 않는다.)
+
+API route 사용 예제 중 하나는 form input을 핸들링하는 경우다. 예를 들어, 특정 페이지에 작성된 form data를 API 라우트에 `POST` 요청 할 수 있다. 그리고 해당 API 라우트에서 전달된 form data를 DB에 저장하는 식의 작업을 할 수 있다. API 라우트 역시 client 번들에 포함되지 않기 때문에, 서버 사이드 코드를 안전하게 작성 할 수 있다.
+
+```javascript
+export default function handler(req, res) {
+  const email = req.body.email
+  // Then save email to your database, etc...
+}
+```
+
