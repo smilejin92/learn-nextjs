@@ -173,3 +173,437 @@ export default MyApp;
 
 &nbsp;  
 
+## 3. Pre-rendering & Data Fetching
+
+### Pre-rendering
+
+기본적으로 Next.js는 앱 내 모든 페이지를 pre-render한다. 이 말은, Next.js가 각 페이지에 해당하는 HTML 파일을 미리 생성해놓는다는 것이다. pre-rendering은 SEO, 성능 측면에서 client-side JavaScript를 사용한 페이지 렌더링보다 더 우세하다.
+
+각 HTML 파일은 해당 페이지에 필요한 최소한의 자바스크립트 코드와 맵핑되어 있으며, 브러우저에 의해 해당 페이지가 로드되면 해당 페이지에 필요한 자바스크립트 코드가 실행되어 페이지를 interactive하게 만든다. 이 과정을 **hydration**이라 한다.
+
+Pre-rendering이 적용된 페이지와 그렇지 않은 페이지의 차이점은 아래와 같다.
+
+<img src="/Users/smilejin92/Desktop/pre-rendering.png" alt="pre-rendering" style="zoom:33%;" />
+
+<img src="/Users/smilejin92/Desktop/no-pre-rendering.png" alt="no-pre-rendering" style="zoom:33%;" />
+
+&nbsp;   
+
+### Pre-rendering의 두 가지 종류
+
+Next.js에서 사용하는 pre-rendering 방법은 크게 두 가지이다. 두 방법의 차이점은 **HTML 파일 생성 시점**이다.
+
+* [Static Generation](https://nextjs.org/docs/basic-features/pages#static-generation-recommended): 빌드 타임에 HTML 파일을 생성한다. 이후 발생하는 요청마다 해당 HTML 파일을 재사용한다.
+* [Server-side Rendering](https://nextjs.org/docs/basic-features/pages#server-side-rendering): 매 요청 시 HTML 파일을 생성한다.
+
+<img src="/Users/smilejin92/Desktop/static-generation.png" alt="static-generation" style="zoom:33%;" />
+
+<img src="/Users/smilejin92/Desktop/server-side-rendering.png" alt="server-side-rendering" style="zoom:33%;" />
+
+> dev 모드에서는 static generation을 사용해도 매 요청 시 HTML 파일을 생성한다.
+
+&nbsp;  
+
+Next.js에서는 각 페이지 별로 어떤 pre-rendering 방법을 쓸 것인지 선택 할 수 있다. 따라서 static generation과 server-side rendering 두 방법을 모두 사용하는 "hybrid" 앱을 만들 수도 있다.
+
+&nbsp;  
+
+### Static Generation과 Server-side Rendering의 사용 시점
+
+Next.js의 문서에서는 가능한 static generation을 사용하는 것을 권장한다. 페이지를 1회 빌드하여 재사용 할 수 있기 때문이다. 응답 속도, 서버 성능 측면에서 모두 유리하다.
+
+**만약 사용자의 요청 전에, 페이지를 미리 pre-render해도된다면** static generation을 사용한다. static generation을 적용 할 수 있는 페이지의 예는 아래와 같다.
+
+* 마케팅 페이지
+* 블로그 포스트
+* 온라인 쇼핑몰 상품 리스트
+* 도움말, 이용 약관 등
+
+&nbsp;  
+
+**만약 사용자의 요청 전에 페이지를 미리 pre-render하면 안될 경우**, Server-side rendering을 사용한다. 예를 들어, 해당 페이지의 컨텐츠가 매우 동적이고, 매 요청 시 변경될 수 있다면 static generation은 적합하지 않다. 이러한 경우, 페이지 컨텐츠는 항상 최신 상태를 유지 할 수 있지만, 페이지 응답 속도가 저하 될 수 있기 때문에 pre-render하지 않고 **client-side 자바스크립트를 사용하여 컨텐츠를 업데이트 할 수도 있다.**
+
+&nbsp;  
+
+### Static Generation with/out Data
+
+Next.js에서 데이터를 요청하지 않는 페이지는 기본적으로 static generation이 적용된다 (prod 빌드 시). 반면, 특정 데이터가 없을 시 렌더링 할 수 없는 페이지도 존재한다.
+
+<img src="/Users/smilejin92/Desktop/static-generation-with-data.png" alt="static-generation-with-data" style="zoom:33%;" />
+
+이러한 페이지의 경우 `getStaticProps` 함수를 사용하여 해당 페이지에 필요한 정보를 빌드 타임때 요청할 수 있다.
+
+&nbsp;  
+
+### Static Generation - getStaticProps를 사용하여 데이터 요청하기
+
+1. 페이지 컴포넌트와 같은 위치에 `getStaticProps` async 함수를 export
+2. `getStaticProps` 함수 내부에서 데이터 요청 후 페이지 컴포넌트에 주입 될 prop 객체를 반환
+
+```tsx
+export async function getStaticProps() {
+  // 파일 시스템, API, DB 등 외부 데이터를 요청
+  const response = await fetch('...');
+  const data = await res.json();
+
+  // props 키에 맵핑된 값은 페이지 컴포넌트의 props에 주입 됨
+  return {
+    props: {
+      data
+    }
+  }
+}
+
+// 페이지 컴포넌트
+export default function Home({ data }) { ... }
+```
+
+&nbsp;  
+
+`getStaticProps` 함수 내부에서 DB 쿼리 문도 작성 할 수있다. `getStaticProps` 함수는 server-side에서만 실행되며, client-side에서 절대 실행되지 않는다 (JS 번들에 포함되지도 않는다).
+
+```tsx
+import someDatabaseSDK from 'someDatabaseSDK'
+
+const databaseClient = someDatabaseSDK.createClient(...)
+
+export async function getSortedPostsData() {
+  // Instead of the file system,
+  // fetch post data from a database
+  return databaseClient.query('SELECT posts...')
+}
+```
+
+&nbsp;  
+
+`getStaticProps` 함수는 오직 페이지 컴포넌트의 위치에서만 export 될 수 있다. 리액트는 페이지를 렌더하기 위해 필요한 데이터를 먼저 확보해야하기 때문이다.
+
+&nbsp;  
+
+### SSR - getServerSideProps를 사용하여 데이터 요청하기
+
+만약 빌드 시 특정 데이터를 요청하는 것이 아니라, request time에 요청해야한다면 Server-side rendering을 사용 할 수 있다.
+
+<img src="/Users/smilejin92/Desktop/server-side-rendering-with-data.png" alt="server-side-rendering-with-data" style="zoom:33%;" />
+
+```javascript
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      // props for your component
+    }
+  }
+}
+```
+
+`getServerSideProps` 함수에 전달되는 `context` 매개변수는 요청에 관련된 정보를 담고있다.
+
+```json
+// context
+{
+  req: IncomingMessage {
+    _readableState: ReadableState {
+      objectMode: false,
+      highWaterMark: 16384,
+      buffer: BufferList { head: null, tail: null, length: 0 },
+      length: 0,
+      pipes: [],
+      flowing: null,
+      ended: true,
+      endEmitted: false,
+      reading: false,
+      sync: true,
+      needReadable: false,
+      emittedReadable: false,
+      readableListening: false,
+      resumeScheduled: false,
+      errorEmitted: false,
+      emitClose: true,
+      autoDestroy: false,
+      destroyed: false,
+      errored: null,
+      closed: false,
+      closeEmitted: false,
+      defaultEncoding: 'utf8',
+      awaitDrainWriters: null,
+      multiAwaitDrain: false,
+      readingMore: true,
+      decoder: null,
+      encoding: null,
+      [Symbol(kPaused)]: null
+    },
+    _events: [Object: null prototype] { end: [Function: clearRequestTimeout] },
+    _eventsCount: 1,
+    _maxListeners: undefined,
+    socket: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: null,
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 8,
+      _maxListeners: undefined,
+      _writableState: [WritableState],
+      allowHalfOpen: true,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: [Server],
+      _server: [Server],
+      parser: [HTTPParser],
+      on: [Function: socketListenerWrap],
+      addListener: [Function: socketListenerWrap],
+      prependListener: [Function: socketListenerWrap],
+      _paused: false,
+      _httpMessage: [ServerResponse],
+      timeout: 0,
+      [Symbol(async_id_symbol)]: 12258,
+      [Symbol(kHandle)]: [TCP],
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: -1,
+        _idlePrev: null,
+        _idleNext: null,
+        _idleStart: 105919,
+        _onTimeout: null,
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: true,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 12304,
+        [Symbol(triggerId)]: 12301
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(RequestTimeout)]: undefined
+    },
+    httpVersionMajor: 1,
+    httpVersionMinor: 1,
+    httpVersion: '1.1',
+    complete: true,
+    headers: {
+      host: 'localhost:3000',
+      connection: 'keep-alive',
+      'sec-ch-ua': '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+      'sec-ch-ua-mobile': '?0',
+      'upgrade-insecure-requests': '1',
+      'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36',
+      accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+      'sec-fetch-site': 'none',
+      'sec-fetch-mode': 'navigate',
+      'sec-fetch-user': '?1',
+      'sec-fetch-dest': 'document',
+      'accept-encoding': 'gzip, deflate, br',
+      'accept-language': 'en-US,en;q=0.9,ko;q=0.8,la;q=0.7'
+    },
+    rawHeaders: [
+      'Host',
+      'localhost:3000',
+      'Connection',
+      'keep-alive',
+      'sec-ch-ua',
+      '" Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"',
+      'sec-ch-ua-mobile',
+      '?0',
+      'Upgrade-Insecure-Requests',
+      '1',
+      'User-Agent',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36',
+      'Accept',
+      'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+      'Sec-Fetch-Site',
+      'none',
+      'Sec-Fetch-Mode',
+      'navigate',
+      'Sec-Fetch-User',
+      '?1',
+      'Sec-Fetch-Dest',
+      'document',
+      'Accept-Encoding',
+      'gzip, deflate, br',
+      'Accept-Language',
+      'en-US,en;q=0.9,ko;q=0.8,la;q=0.7'
+    ],
+    trailers: {},
+    rawTrailers: [],
+    aborted: false,
+    upgrade: false,
+    url: '/test',
+    method: 'GET',
+    statusCode: null,
+    statusMessage: null,
+    client: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: null,
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 8,
+      _maxListeners: undefined,
+      _writableState: [WritableState],
+      allowHalfOpen: true,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: [Server],
+      _server: [Server],
+      parser: [HTTPParser],
+      on: [Function: socketListenerWrap],
+      addListener: [Function: socketListenerWrap],
+      prependListener: [Function: socketListenerWrap],
+      _paused: false,
+      _httpMessage: [ServerResponse],
+      timeout: 0,
+      [Symbol(async_id_symbol)]: 12258,
+      [Symbol(kHandle)]: [TCP],
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: -1,
+        _idlePrev: null,
+        _idleNext: null,
+        _idleStart: 105919,
+        _onTimeout: null,
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: true,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 12304,
+        [Symbol(triggerId)]: 12301
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(RequestTimeout)]: undefined
+    },
+    _consuming: false,
+    _dumped: false,
+    cookies: [Getter/Setter],
+    __NEXT_INIT_QUERY: {},
+    [Symbol(kCapture)]: false,
+    [Symbol(RequestTimeout)]: undefined
+  },
+  res: <ref *1> ServerResponse {
+    _events: [Object: null prototype] { finish: [Function: bound resOnFinish] },
+    _eventsCount: 1,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: false,
+    _last: false,
+    chunkedEncoding: false,
+    shouldKeepAlive: true,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: true,
+    sendDate: true,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    _contentLength: null,
+    _hasBody: true,
+    _trailer: '',
+    finished: false,
+    _headerSent: false,
+    socket: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: null,
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 8,
+      _maxListeners: undefined,
+      _writableState: [WritableState],
+      allowHalfOpen: true,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: [Server],
+      _server: [Server],
+      parser: [HTTPParser],
+      on: [Function: socketListenerWrap],
+      addListener: [Function: socketListenerWrap],
+      prependListener: [Function: socketListenerWrap],
+      _paused: false,
+      _httpMessage: [Circular *1],
+      timeout: 0,
+      [Symbol(async_id_symbol)]: 12258,
+      [Symbol(kHandle)]: [TCP],
+      [Symbol(kSetNoDelay)]: false,
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: -1,
+        _idlePrev: null,
+        _idleNext: null,
+        _idleStart: 105919,
+        _onTimeout: null,
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: true,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 12304,
+        [Symbol(triggerId)]: 12301
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(RequestTimeout)]: undefined
+    },
+    _header: null,
+    _keepAliveTimeout: 5000,
+    _onPendingData: [Function: bound updateOutgoingData],
+    _sent100: false,
+    _expect_continue: false,
+    statusCode: 200,
+    flush: [Function: flush],
+    write: [Function: write],
+    end: [Function: end],
+    on: [Function: on],
+    writeHead: [Function: writeHead],
+    [Symbol(kCapture)]: false,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kOutHeaders)]: null
+  },
+  query: {},
+  resolvedUrl: '/test',
+  locales: undefined,
+  locale: undefined,
+  defaultLocale: undefined
+}
+```
+
+SSR 사용 시 주의해야 할 점은 서버가 매 요청을 처리하여 HTML을 생성하기 때문에 응답 시간이 느려지며, compute된 결과를 CDN에 캐싱하기 위해서는 추가 작업이 필요하다.
+
+&nbsp;  
+
+### Client-side rendering
+
+만약 데이터를 pre-render하지 않아도 된다면, client-side rendering을 사용 할 수 있다.
+
+* static generation을 사용하여 데이터가 필요하지 않은 영역을 pre-render
+* 페이지 로드 시 client-side 자바스크립트를 사용하여 데이터 요청 후, 남은 영역을 렌더
+
+<img src="/Users/smilejin92/Desktop/client-side-rendering.png" alt="client-side-rendering" style="zoom:33%;" />
+
+이러한 방법은 대시보드 같은 페이지를 다룰 때 잘 사용된다. 대시보드 페이지는 private하며, 사용자마다 페이지에 표시되는 컨텐츠가 다르고, SEO와는 관계 없기 때문에 pre-render될 필요가 없다. 표시되는 데이터 역시 빠른 주기로 업데이트될 수 있기 때문에 client-side rendering을 사용하는 것이 ssr을 사용하는 것 보다 더 나은 선택이 될 수 있다.
+
+&nbsp;  
+
