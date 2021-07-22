@@ -101,6 +101,7 @@ const YourComponent = () => (
     height={144} // must
     width={144} // must
     alt="Your Name" // must
+    priority // if true, preloaded
   />
 )
 ```
@@ -108,4 +109,67 @@ const YourComponent = () => (
 &nbsp;  
 
 ### Metadata
+
+페이지의 메타데이터를 수정하기 위해서는 Next.js의[ `Head` 컴포넌트](https://nextjs.org/docs/api-reference/next/head)를 사용한다.
+
+```tsx
+import Head from 'next/head';
+
+const HeadComponent = () => (
+	<Head>
+    <title>First post</title>
+  </Head>
+);
+```
+
+만약 `html` 태그를 수정하고 싶다면 (ex. `lang` 어트리뷰트) `page/_document.js` 파일을 생성하여 설정 할 수 있다. 자세한 내용은 [이 곳](https://nextjs.org/docs/advanced-features/custom-document)에서 확인 할 수 있다.
+
+&nbsp;  
+
+### CSS 스타일링
+
+Next.js는 기본적으로 `styled-jsx` 라이브러리를 지원한다. `styled-jsx` 는 리액트 컴포넌트 내부에 스타일을 작성 할 수 있도록하며, 작성한 스타일은 스코핑된다.
+
+```tsx
+<style jsx>{`
+	...
+`}</style>
+```
+
+`styled-jsx` 외에 기본적으로 CSS, SASS 모듈(`*.module.css`, `*.module.scss`)을 지원하며, `styled-components` 혹은 `emotion` 과 같은 CSS-in-JS 라이브러리도 설치 후 사용 가능하다.
+
+&nbsp;  
+
+CSS, SASS 모듈 사용 시 아래와 같이 import하여 사용한다.
+
+```tsx
+import styles from './layout.module.css'
+
+export default function Layout({ children }) {
+  return <div className={styles.container}>{children}</div>
+}
+```
+
+CSS, SASS 모듈 사용 시 유니크한 클래스 네임을 자동으로 생성한다. 때문에 선택자 이름이 중복될 염려를 하지 않아도 된다. 또한, Next.js에서 지원하는 코드 스플릿팅은 CSS, SASS 모듈에도 해당된다. 즉, 로드된 페이지에 필요한 스타일만을 로드한다. 앱 빌드 시 자바스크립트 번들에서 해당 스타일을 추출하여 `.css` 파일로 로드된다.
+
+&nbsp;  
+
+**전역 스타일**
+
+전역 스타일은 `pages/_app.js` 파일(`App` 컴포넌트)에만 추가한다. 이 곳에 추가된 전역 스타일은 말 그대로 모든 페이지의 컴포넌트 스타일에 영향을 미친다. App 컴포넌트에는 전역 스타일 뿐만 아니라, 여러 페이지에서 공통으로 사용되는 상태도 관리될 수 있다.
+
+```tsx
+// pages/_app.tsx
+
+import '../styles/globals.css'
+import type { AppProps } from 'next/app'
+
+function MyApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />
+}
+
+export default MyApp;
+```
+
+&nbsp;  
 
