@@ -2,13 +2,12 @@ import Head from 'next/head';
 import Layout, { siteTitle } from '../components/Layout';
 import utilStyles from '../styles/utils.module.css';
 import { getSortedPostsData } from '../lib/posts';
-import { GetStaticProps, GetStaticPropsContext } from 'next';
+import { GetStaticProps } from 'next';
+import Link from 'next/link';
+import Date from '../components/Date';
 
 // 빌드 시 Post 데이터를 요청
-export const getStaticProps: GetStaticProps = (
-  context: GetStaticPropsContext,
-) => {
-  console.log(context);
+export const getStaticProps: GetStaticProps = () => {
   const allPostsData = getSortedPostsData();
 
   return {
@@ -46,11 +45,13 @@ export default function Home({ allPostsData }: HomeProps) {
         <ul className={utilStyles.list}>
           {allPostsData.map(({ id, date, title }) => (
             <li className={utilStyles.listItem} key={id}>
-              {title}
+              <Link href={`/posts/${id}`}>
+                <a>{title}</a>
+              </Link>
               <br />
-              {id}
-              <br />
-              {date}
+              <small className={utilStyles.lightText}>
+                <Date dateString={date} />
+              </small>
             </li>
           ))}
         </ul>
