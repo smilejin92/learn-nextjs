@@ -183,7 +183,7 @@ export default MyApp;
 
 Pre-rendering이 적용된 페이지와 그렇지 않은 페이지의 차이점은 아래와 같다.
 
-<img src="/Users/smilejin92/Desktop/pre-rendering.png" alt="pre-rendering" style="zoom:33%;" />
+<img src="https://user-images.githubusercontent.com/32444914/127111025-fad444ca-f018-47df-a2bd-d44dac042cbe.png" alt="pre-rendering" style="zoom:33%;" />
 
 <img src="/Users/smilejin92/Desktop/no-pre-rendering.png" alt="no-pre-rendering" style="zoom:33%;" />
 
@@ -196,9 +196,9 @@ Next.js에서 사용하는 pre-rendering 방법은 두 가지이다. 두 방법�
 * [Static Generation](https://nextjs.org/docs/basic-features/pages#static-generation-recommended): 빌드 타임에 HTML 파일을 생성한다. 이후 발생하는 요청마다 해당 HTML 파일을 재사용한다.
 * [Server-side Rendering](https://nextjs.org/docs/basic-features/pages#server-side-rendering): 매 요청 시 HTML 파일을 생성한다.
 
-<img src="/Users/smilejin92/Desktop/static-generation.png" alt="static-generation" style="zoom:33%;" />
+<img src="https://user-images.githubusercontent.com/32444914/127111041-7558bf5c-5dd2-4c20-8430-a0504e6efae1.png" alt="static-generation" style="zoom:33%;" />
 
-<img src="/Users/smilejin92/Desktop/server-side-rendering.png" alt="server-side-rendering" style="zoom:33%;" />
+<img src="https://user-images.githubusercontent.com/32444914/127111039-a0046002-3c04-4c13-865d-3b9d45141fcb.png" alt="server-side-rendering" style="zoom:33%;" />
 
 > dev 모드에서는 static generation을 사용해도 매 요청 시 HTML 파일을 생성한다.
 
@@ -231,7 +231,7 @@ SSR을 사용 할 경우 페이지 컨텐츠는 항상 최신 상태를 유지 �
 
 Next.js에서 데이터를 요청하지 않는 페이지는 기본적으로 static generation이 적용된다 (prod 빌드 시). 반면, 특정 데이터가 없을 시 렌더링 할 수 없는 페이지도 존재한다.
 
-<img src="/Users/smilejin92/Desktop/static-generation-with-data.png" alt="static-generation-with-data" style="zoom:33%;" />
+<img src="https://user-images.githubusercontent.com/32444914/127111037-f9b1709f-6dfb-42f9-98c7-ad736a504a71.png" alt="static-generation-with-data" style="zoom:33%;" />
 
 이러한 페이지의 경우 `getStaticProps` 함수를 사용하여 해당 페이지에 필요한 정보를 빌드 타임때 요청하여 페이지 컴포넌트의 `prop`으로 전달 할 수 있다.
 
@@ -297,7 +297,7 @@ export default function Home({ data }) { ... }
 
 만약 빌드 시 특정 데이터를 요청하는 것이 아니라, request time에 요청해야 한다면 Server-side rendering을 사용 할 수 있다.
 
-<img src="/Users/smilejin92/Desktop/server-side-rendering-with-data.png" alt="server-side-rendering-with-data" style="zoom:33%;" />
+<img src="https://user-images.githubusercontent.com/32444914/127111036-70e59a95-fcf9-441d-ad02-5c81966d6d6e.png" alt="server-side-rendering-with-data" style="zoom:33%;" />
 
 &nbsp;  
 
@@ -383,7 +383,7 @@ SSR 사용 시 주의해야 할 점은 서버가 매 요청을 처리하여 HTML
 * static generation을 사용하여 데이터가 필요하지 않은 영역을 pre-render
 * 페이지 로드 시 client-side 자바스크립트를 사용하여 데이터 요청 후, 남은 영역을 렌더
 
-<img src="/Users/smilejin92/Desktop/client-side-rendering.png" alt="client-side-rendering" style="zoom:33%;" />
+<img src="https://user-images.githubusercontent.com/32444914/127111450-e5a53294-5b95-49c0-b6d1-94c8d3e8d9e9.png" alt="client-side-rendering" style="zoom:33%;" />
 
 이러한 방법은 대시보드 같은 페이지를 다룰 때 유용하다. 대시보드 페이지는 private하며, 사용자마다 페이지에 표시되는 컨텐츠가 다르고, SEO와는 관계 없기 때문에 pre-render될 필요가 없다. 표시되는 데이터 역시 빠른 주기로 업데이트될 수 있기 때문에 client-side rendering을 사용하는 것이 ssr을 사용하는 것 보다 더 나은 선택이 될 수 있다.
 
@@ -395,7 +395,7 @@ SSR 사용 시 주의해야 할 점은 서버가 매 요청을 처리하여 HTML
 
 Next.js는 **페이지 경로가 외부 데이터에 의존적인 페이지**를 pre-render 할 수 있다. 예를 들어, `/posts/:id` 경로에 해당하는 페이지에 각각 필요한 데이터를 요청 후 페이지를 pre-render 할 수 있다. 이를 가능하게 하는 것은 **dynamic URL**이다.
 
-<img src="/Users/smilejin92/Desktop/page-path-external-data.png" alt="page-path-external-data" style="zoom:33%;" />
+<img src="https://user-images.githubusercontent.com/32444914/127111032-9f7429e7-32ea-4071-8994-b65ea10d11ec.png" alt="page-path-external-data" style="zoom:33%;" />
 
 &nbsp;  
 
@@ -425,7 +425,7 @@ export default function Post() {
 * **getStaticProps**: `context` 매개변수를 전달받아 `context.params[paramsName]`에 필요한 정보를 요청
 * 페이지 컴포넌트
 
-<img src="/Users/smilejin92/Desktop/how-to-dynamic-routes.png" alt="how-to-dynamic-routes" style="zoom:33%;" />
+<img src="https://user-images.githubusercontent.com/32444914/127111028-79d01e1e-fe38-44b1-a0ea-86f2196aaa81.png" alt="how-to-dynamic-routes" style="zoom:33%;" />
 
 &nbsp;  
 
